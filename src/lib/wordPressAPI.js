@@ -38,7 +38,7 @@ export const getAllWordPressPages = async () => {
 	return data?.pages;
 };
 
-export const getPageBySlug = async (slug) => {
+export const getWordPressPageBySlug = async (slug) => {
 	const data = await fetchWordPressAPI(`
     {
       page(id: "${slug}", idType: URI) {
