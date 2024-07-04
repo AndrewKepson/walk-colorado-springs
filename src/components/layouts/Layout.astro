@@ -7,7 +7,7 @@ interface Props {
 	noIndex: boolean;
 }
 
-import { siteUrl } from "@lib/store.js";
+import { isProduction, siteUrl } from "@lib/store.js";
 
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
@@ -19,6 +19,9 @@ const { title, description, canonical, ogImage, noIndex } = Astro.props;
 <html lang="en">
 	<head>
 		<!-- Insert Google Tag Manager Here -->
+		 {isProduction && (
+			// Insert Tracking Scripts Here
+		 )}
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
 		<meta property="og:title" content={title} />
