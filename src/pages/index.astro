@@ -1,10 +1,16 @@
 ---
+import { getAllWalks } from "@lib/wordPressAPI";
+import { getNumberOfWalks, getTotalMilesWalked } from "@lib/functions";
+
+const allWalks = await getAllWalks();
+const walkData = {
+	totalWalks: getNumberOfWalks(allWalks),
+	totalMiles: getTotalMilesWalked(allWalks),
+};
+
 import Layout from "../components/layouts/Layout.astro";
 import Hero from "./_components/Hero.astro";
-import { getAllWalks } from "@lib/wordPressAPI";
-
-const walkData = await getAllWalks();
-console.log(walkData);
+import WalkStats from "./_components/WalkStats.astro";
 ---
 
 <Layout
@@ -13,5 +19,5 @@ console.log(walkData);
 	canonical="/"
 >
 	<Hero />
+	<WalkStats walkData={walkData} />
 </Layout>
-

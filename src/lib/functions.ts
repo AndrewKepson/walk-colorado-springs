@@ -1,3 +1,5 @@
+import { type FlattenedWalk } from "./wordPressAPI.types";
+
 // * Utility Functions
 export function sortArrayObjectsByProperty(arr, property) {
 	if (!arr || !arr.every((element) => element.hasOwnProperty(property))) {
@@ -50,3 +52,29 @@ export function formatWalkDate(dateString: string): string {
 // Example usage:
 // const formattedDate = formatWalkDate("2024-08-30T00:00:00+00:00");
 // console.log(formattedDate); // Output: "August 30, 2024"
+
+/**
+ * Calculates the total miles walked from an array of WalkData.
+ * @param walks - An array of WalkData objects
+ * @returns The sum of miles walked, rounded to two decimal places
+ */
+export function getTotalMilesWalked(walks: FlattenedWalk[]): number {
+	const totalMiles = walks.reduce((sum, walk) => sum + walk.miles, 0);
+	return Number(totalMiles.toFixed(2)); // Round to two decimal places
+}
+
+/**
+ * Counts the total number of walks in the WalkData array.
+ * @param walks - An array of WalkData objects
+ * @returns The total number of walks
+ */
+export function getNumberOfWalks(walks: FlattenedWalk[]): number {
+	return walks.length;
+}
+
+// Example usage:
+// const walks: WalkData[] = [...]; // Your array of walk data
+// const totalMiles = getTotalMilesWalked(walks);
+// const numberOfWalks = getNumberOfWalks(walks);
+// console.log(`Total miles walked: ${totalMiles}`);
+// console.log(`Number of walks: ${numberOfWalks}`);

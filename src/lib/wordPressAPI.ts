@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+import { type FlattenedWalk, type WalksData } from "./wordPressAPI.types";
+
 const WP_API_URL = process.env.WPGRAPHQL_ENDPOINT;
 
 const fetchWordPressAPI = async <T>(query: string, variables: Record<string, unknown> = {}): Promise<T> => {
@@ -96,46 +98,6 @@ export const getWordPressPostBySlug = async (slug) => {
 
 	return data?.post;
 };
-
-interface MapImage {
-	url: string;
-	altText: string;
-}
-
-interface WalkFields {
-	date: string;
-	miles: number;
-	walkNumber: number;
-	mapImage: {
-		node: {
-			sourceUrl: string;
-			altText: string;
-		};
-	};
-}
-
-interface WalkNode {
-	id: string;
-	title: string;
-	walkFields: WalkFields;
-}
-
-interface WalkEdge {
-	node: WalkNode;
-}
-
-interface WalksData {
-	walks: {
-		edges: WalkEdge[];
-	};
-}
-
-interface FlattenedWalk extends Omit<WalkNode, "walkFields"> {
-	date: string;
-	miles: number;
-	walkNumber: number;
-	mapImage: MapImage;
-}
 
 export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
 	const data = await fetchWordPressAPI<WalksData>(`

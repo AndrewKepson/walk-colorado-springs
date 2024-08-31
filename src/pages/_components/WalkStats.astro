@@ -1,0 +1,78 @@
+---
+interface Props {
+	walkData: {
+		totalWalks: number;
+		totalMiles: number;
+	};
+}
+
+const { walkData } = Astro.props;
+---
+
+<section class="py-20">
+	<div class="container mx-auto px-4">
+		<div class="-mx-4 -mb-8 flex flex-wrap items-center">
+			<div class="mb-8 w-full px-4 text-center md:w-1/2">
+				<h3
+					id="total-walks-counter"
+					class="font-heading text-cityscape-blue-500 mb-2 text-5xl font-bold lg:text-6xl"
+					data-total-walks={walkData?.totalWalks}
+				>
+					{walkData?.totalWalks}
+				</h3>
+				<p class="text-cityscape-blue-900 font-body text-lg">Total Walks</p>
+			</div>
+			<div class="mb-8 w-full px-4 text-center md:w-1/2">
+				<h3
+					id="total-miles-counter"
+					class="font-heading text-sunset-orange-500 mb-2 text-5xl font-bold lg:text-6xl"
+					data-miles-walked={walkData?.totalMiles}
+				>
+					{walkData?.totalMiles}
+				</h3>
+				<p class="font-body text-cityscape-blue-900 text-lg ">Miles Walked</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	import { CountUp } from "countup.js";
+
+	document.addEventListener("DOMContentLoaded", () => {
+		const totalWalksCounter = document.getElementById("total-walks-counter");
+		const totalMilesCounter = document.getElementById("total-miles-counter");
+
+		const totalWalks = parseInt(totalWalksCounter?.dataset.totalWalks || "0", 10);
+		const totalMilesWalked = parseFloat(totalMilesCounter?.dataset.milesWalked || "0");
+
+		if (totalWalksCounter) {
+			const walksCountUp = new CountUp(totalWalksCounter, totalWalks, {
+				duration: 2.5,
+				useEasing: true,
+				useGrouping: true,
+			});
+
+			if (!walksCountUp.error) {
+				walksCountUp.start();
+			} else {
+				console.error(`Walks CountUp Error: ${walksCountUp.error}`);
+			}
+		}
+
+		if (totalMilesCounter) {
+			const milesCountUp = new CountUp(totalMilesCounter, totalMilesWalked, {
+				decimalPlaces: 2,
+				duration: 2.5,
+				useEasing: true,
+				useGrouping: true,
+			});
+
+			if (!milesCountUp.error) {
+				milesCountUp.start();
+			} else {
+				console.error(`Miles CountUp Error: ${milesCountUp.error}`);
+			}
+		}
+	});
+</script>
