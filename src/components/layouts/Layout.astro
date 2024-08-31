@@ -84,5 +84,11 @@ const { title, description, canonical, ogImage, noIndex } = Astro.props;
 			font-style: italic;
 			font-display: swap;
 		}
+
+		.walking-transition{
+			transition-property: all;
+			transition-duration: 200ms;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+		}
 	</style>
 </html>
