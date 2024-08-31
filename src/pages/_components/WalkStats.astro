@@ -30,7 +30,7 @@ const { walkData } = Astro.props;
 				>
 					{walkData?.totalMiles}
 				</h3>
-				<p class="font-body text-cityscape-blue-900 text-lg ">Miles Walked</p>
+				<p class="font-body text-cityscape-blue-900 text-lg">Miles Walked</p>
 			</div>
 		</div>
 	</div>
@@ -46,33 +46,51 @@ const { walkData } = Astro.props;
 		const totalWalks = parseInt(totalWalksCounter?.dataset.totalWalks || "0", 10);
 		const totalMilesWalked = parseFloat(totalMilesCounter?.dataset.milesWalked || "0");
 
-		if (totalWalksCounter) {
-			const walksCountUp = new CountUp(totalWalksCounter, totalWalks, {
-				duration: 2.5,
-				useEasing: true,
-				useGrouping: true,
-			});
-
-			if (!walksCountUp.error) {
-				walksCountUp.start();
+		const startAnimation = (element, endValue, options) => {
+			const countUp = new CountUp(element, endValue, options);
+			if (!countUp.error) {
+				countUp.start();
 			} else {
-				console.error(`Walks CountUp Error: ${walksCountUp.error}`);
+				console.error(`CountUp Error for ${element.id}: ${countUp.error}`);
 			}
+		};
+
+		const observerOptions = {
+			root: null,
+			rootMargin: "0px",
+			threshold: 0.1,
+		};
+
+		const observerCallback = (entries, observer) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					if (entry.target.id === "total-walks-counter") {
+						startAnimation(entry.target, totalWalks, {
+							duration: 2.5,
+							useEasing: true,
+							useGrouping: true,
+						});
+					} else if (entry.target.id === "total-miles-counter") {
+						startAnimation(entry.target, totalMilesWalked, {
+							decimalPlaces: 2,
+							duration: 2.5,
+							useEasing: true,
+							useGrouping: true,
+						});
+					}
+					observer.unobserve(entry.target);
+				}
+			});
+		};
+
+		const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+		if (totalWalksCounter) {
+			observer.observe(totalWalksCounter);
 		}
 
 		if (totalMilesCounter) {
-			const milesCountUp = new CountUp(totalMilesCounter, totalMilesWalked, {
-				decimalPlaces: 2,
-				duration: 2.5,
-				useEasing: true,
-				useGrouping: true,
-			});
-
-			if (!milesCountUp.error) {
-				milesCountUp.start();
-			} else {
-				console.error(`Miles CountUp Error: ${milesCountUp.error}`);
-			}
+			observer.observe(totalMilesCounter);
 		}
 	});
 </script>
