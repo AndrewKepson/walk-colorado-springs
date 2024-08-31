@@ -7,10 +7,11 @@ interface Props {
 	noIndex: boolean;
 }
 
+// import { ViewTransitions } from "astro:transitions";
 import { isProduction, siteUrl } from "@lib/store.js";
 
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
+import Header from "@components/layouts/Header.astro";
+import Footer from "@components/layouts/Footer.astro";
 
 const { title, description, canonical, ogImage, noIndex } = Astro.props;
 ---
@@ -19,9 +20,9 @@ const { title, description, canonical, ogImage, noIndex } = Astro.props;
 <html lang="en">
 	<head>
 		<!-- Insert Google Tag Manager Here -->
-		 {isProduction && (
+		<!-- {isProduction && (
 			// Insert Tracking Scripts Here
-		 )}
+		 )} -->
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
 		<meta property="og:title" content={title} />
@@ -33,33 +34,48 @@ const { title, description, canonical, ogImage, noIndex } = Astro.props;
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.ico" />
 		{canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
 		{noIndex && <meta name="robots" content="noindex" />}
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<!-- <ViewTransitions /> -->
 	</head>
-	<body class="m-auto max-w-full overflow-hidden">
+	<body class="m-auto max-w-screen-xl">
 		<!-- Insert Google Tag Manager Here -->
 		<Header />
-		<main>
+		<main class="min-h-screen">
 			<slot />
 		</main>
 		<Footer />
-		<!-- Flowbite Script -->
-		<!-- <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script> -->
-	</body>
-</html>
-<style is:global>
-	body {
-		overflow-x: hidden;
-	}
+		<script src="../../lib/pgia.js"></script>
+	</body><style is:global>
+		@font-face {
+			font-family: "Montserrat";
+			src: url("/fonts/montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
+			font-style: normal;
+			font-display: swap;
+		}
 
-	/* Locally Host Fonts. Folder path relative to /public */
-	/* @font-face {
-		font-family: "NexaText";
-		src: url("/fonts/Roboto.otf");
-		font-weight: normal;
-		font-display: swap;
-	} */
-</style>
+		@font-face {
+			font-family: "Montserrat";
+			src: url("/fonts/montserrat/Montserrat-Italic-VariableFont_wght.ttf") format("truetype");
+			font-style: italic;
+			font-display: swap;
+		}
+
+		@font-face {
+			font-family: "Open Sans";
+			src: url("/fonts/open-sans/OpenSans-VariableFont_wdth,wght.ttf") format("truetype");
+			font-style: normal;
+			font-display: swap;
+		}
+
+		@font-face {
+			font-family: "Open Sans";
+			src: url("/fonts/open-sans/OpenSans-Italic-VariableFont_wdth,wght.ttf") format("truetype");
+			font-style: italic;
+			font-display: swap;
+		}
+	</style>
+</html>

@@ -1,0 +1,29 @@
+---
+export interface WalkData {
+	id: string;
+	title: string;
+	date: string;
+	miles: number;
+	walkNumber: number;
+	mapImage: {
+		url: string;
+		altText: string;
+	};
+}
+
+interface Props {
+	walks: WalkData[];
+}
+
+const { walks } = Astro.props;
+
+import WalkCard from "./WalkCard.astro";
+---
+
+<section class="py-8 text-gray-500" id="latest-walks">
+	<div class="container relative mx-auto px-4">
+		<div class="-mx-4 flex flex-wrap space-y-6">
+			{walks.map((walk) => <WalkCard walk={walk} />)}
+		</div>
+	</div>
+</section>

@@ -1,0 +1,16 @@
+---
+import { getAllWalks } from "@lib/wordPressAPI";
+
+const latestWalks = await getAllWalks();
+
+import Layout from "@components/layouts/Layout.astro";
+import WalksList from "./_components/WalksList.astro";
+---
+
+<Layout
+	title="Latest Walks | Walk Colorado Springs"
+	description="See the latest walks I have completed on my journey toward walking every street in Colorado Springs."
+	canonical="/walks"
+>
+	<WalksList walks={latestWalks} />
+</Layout>

@@ -1,18 +1,17 @@
 ---
 import Layout from "../components/layouts/Layout.astro";
+import Hero from "./_components/Hero.astro";
+import { getAllWalks } from "@lib/wordPressAPI";
+
+const walkData = await getAllWalks();
+console.log(walkData);
 ---
 
 <Layout
-	title="Welcome to my Headless WordPress site."
-	description="This headless WordPress site is styled with TailwindCSS."
+	title="Walk Colorado Springs | One Man's Mission to Walk Every Street in COS"
+	description="I am on a mission to walk every street in Colorado Springs. Feel free to follow along or join me!"
 	canonical="/"
 >
-	<section>
-		<h1>Welcome to my Headless WordPress site.</h1>
-		<p>This headless WordPress site is styled with TailwindCSS.</p>
-	</section>
+	<Hero />
 </Layout>
 
-<script>
-	console.log("Thank you for visiting my headless WordPress site.");
-</script>
