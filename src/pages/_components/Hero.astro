@@ -6,15 +6,19 @@ import { Image } from "astro:assets";
 	<Image
 		src={import("@images/walk-colorado-springs-graphic-1.png")}
 		class="absolute inset-0 h-full w-full object-cover object-center"
-		alt="..."
+		alt="An animation of a person resting their feet overlooking Colorado Springs after a day of walking."
 		width="1080"
 		height="720"
+		loading="eager"
+		fetchpriority="high"
 	/>
 	<div class="container relative mx-auto px-4 py-48">
 		<div class="-mx-4 flex flex-wrap">
 			<div class="bg-cityscape-blue-500 relative -top-44 mx-auto w-full bg-opacity-45 p-4 text-center lg:w-8/12">
 				<h1 class="font-heading mb-4 text-5xl font-extrabold md:text-6xl">Walk Colorado Springs</h1>
-				<p class="font-body mb-6 text-xl font-light">Just a guy on a mission to walk every street in COS.</p>
+				<p class="font-body mb-6 text-xl font-light">
+					Walking every street in Colorado Springs, one block at a time.
+				</p>
 			</div>
 		</div>
 	</div>
