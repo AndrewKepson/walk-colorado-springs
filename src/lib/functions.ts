@@ -31,22 +31,25 @@ export function sortEdgesByTitle(edges) {
  * @param dateString - A date string in the format "YYYY-MM-DDTHH:mm:ss+00:00"
  * @returns A formatted date string in the format "Month DD, YYYY"
  */
-export function formatWalkDate(dateString: string): string {
+export function formatWalkDate(dateString: string, outputFormat: "readable" | "ISO" = "readable"): string {
 	const date = new Date(dateString);
 
-	// Check if the date is valid
 	if (isNaN(date.getTime())) {
 		throw new Error("Invalid date string provided");
 	}
 
-	const options: Intl.DateTimeFormatOptions = {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		timeZone: "UTC", // Ensure consistent output regardless of local timezone
-	};
+	if (outputFormat === "ISO") {
+		return date.toISOString().split("T")[0];
+	} else {
+		const options: Intl.DateTimeFormatOptions = {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			timeZone: "UTC",
+		};
 
-	return date.toLocaleDateString("en-US", options);
+		return date.toLocaleDateString("en-US", options);
+	}
 }
 
 // Example usage:

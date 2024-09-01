@@ -24,6 +24,12 @@ export interface MapImage {
 	altText: string;
 }
 
+export interface Photo {
+	id: string;
+	sourceUrl: string;
+	altText: string;
+}
+
 export interface WalkFields {
 	date: string;
 	miles: number;
@@ -33,6 +39,14 @@ export interface WalkFields {
 			sourceUrl: string;
 			altText: string;
 		};
+	};
+	area: string;
+	neighborhood: string;
+	content: string;
+	photos: {
+		edges: {
+			node: Photo;
+		}[];
 	};
 }
 
@@ -50,6 +64,18 @@ export interface WalksData {
 	walks: {
 		edges: WalkEdge[];
 	};
+}
+export interface FlattenedWalk {
+	id: string;
+	title: string;
+	date: string;
+	miles: number;
+	walkNumber: number;
+	mapImage: MapImage;
+	area: string;
+	neighborhood: string;
+	content: string;
+	photos: Photo[];
 }
 
 export interface FlattenedWalk extends Omit<WalkNode, "walkFields"> {

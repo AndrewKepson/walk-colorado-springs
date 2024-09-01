@@ -3,6 +3,7 @@ import {
 	getWordPressPageBySlug,
 	getAllWordPressPosts,
 	getWordPressPostBySlug,
+	getAllWalks,
 } from "./wordPressAPI";
 
 export const isProduction = import.meta.env.PROD;
@@ -14,4 +15,5 @@ export const useWordPressAPI = {
 	getWordPressPageBySlug,
 	getAllWordPressPosts,
 	getWordPressPostBySlug,
+	getAllWalks,
 };

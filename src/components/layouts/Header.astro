@@ -5,7 +5,13 @@ import { Image } from "astro:assets";
 <header class="container mx-auto" id="site-header" data-pg-name="Header" data-pg-collapsed>
 	<nav class="flex flex-wrap items-center bg-white px-4 py-5">
 		<a href="/" class="font-heading text-sunset-orange-500 mr-auto text-xl font-medium uppercase"
-			><Image src={import("@images/walk-colorado-springs-logo.png")} width="150" alt="Walk Colorado Springs Logo" /> Walk Colorado Springs
+			><Image
+				src={import("@images/walk-colorado-springs-logo.png")}
+				width="150"
+				alt="Walk Colorado Springs Logo"
+				loading="eager"
+				fetchpriority="high"
+			/> Walk Colorado Springs
 		</a>
 		<button
 			class="text-sunset-orange-500 hover:bg-sunset-orange-500 rounded px-3 py-2 hover:text-white lg:hidden"

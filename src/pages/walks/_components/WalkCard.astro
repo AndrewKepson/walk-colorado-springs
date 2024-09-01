@@ -31,17 +31,18 @@ import { formatWalkDate } from "@lib/functions";
 			<p class="font-body text-cityscape-blue-500 walk-card-distance my-4 text-base">
 				Distance Completed: <span class="font-semibold">{walk?.miles} mi</span>
 			</p>
-			<p class="text-cityscape-blue-500 walk-card-date mb-2 text-base font-body font-semibold leading-tight">
-				{formatWalkDate(walk?.date)}
+			<p class="text-cityscape-blue-500 walk-card-date font-body mb-2 text-base font-semibold leading-tight">
+				{formatWalkDate(walk?.date, "readable")}
 			</p>
 			<!-- <p class="mb-4">
 				Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis
 				enim velit mollit. Exercitation veniam consequat sunt nostrud amet.
-			</p><a
-				href="#"
+			</p> -->
+			<a
+				href={`/walks/${walk?.walkNumber}/${formatWalkDate(walk?.date, "ISO")}`}
 				class="border-sunset-orange-500 text-cityscape-blue-500 walking-transition hover:bg-sunset-orange-500 hover:text-cityscape-blue-500 inline-block rounded border px-3 py-1 text-sm"
 				>See More</a
-			> -->
+			>
 		</div>
 	</div>
 </div>

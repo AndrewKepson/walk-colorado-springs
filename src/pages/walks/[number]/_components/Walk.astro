@@ -1,0 +1,77 @@
+---
+import { type FlattenedWalk } from "@lib/wordPressAPI.types";
+
+interface Props {
+	walk: FlattenedWalk;
+}
+
+import { Image } from "astro:assets";
+import { formatWalkDate } from "@lib/functions";
+
+import PhotosSlider from "./PhotosSlider.astro";
+
+const { walk } = Astro.props;
+---
+
+<div class="container mx-auto py-12">
+	<article id="walk">
+		<h1 id="walk-title" class="font-heading my-4 text-5xl font-bold" data-pg-collapsed>
+			Walk <span id="walk-number">{walk?.walkNumber}</span>: {formatWalkDate(walk?.date, "readable")}
+		</h1>
+		<section id="walk-stats" class="font-body grid gap-2 text-lg md:grid-cols-2 md:text-xl" data-pg-collapsed>
+			<div data-pg-collapsed>
+				<p class="font-bold">
+					Distance: <span id="walk-distance" class="text-cityscape-blue-500 font-semibold">{walk?.miles} mi</span>
+				</p>
+			</div>
+			<div>
+				<p class="font-bold">
+					Date: <span id="walk-date" class="text-cityscape-blue-500 font-semibold"
+						>{formatWalkDate(walk?.date, "readable")}</span>
+				</p>
+			</div>
+			<div data-pg-collapsed>
+				<p class="font-bold">Area: <span id="walk-area" class="text-cityscape-blue-500 font-semibold">{walk?.area}</span></p>
+			</div>
+			<div data-pg-collapsed>
+				<p class="font-bold">
+					Neighborhood: <span id="walk-neighborhood" class="text-cityscape-blue-500 font-semibold"
+						>{walk?.neighborhood}</span>
+				</p>
+			</div>
+		</section>
+		<section class="w-full p-10" data-pg-collapsed>
+			<div class="flex w-full justify-center">
+				<Image
+					id="walk-map"
+					class="rounded-sm shadow-md"
+					width="450"
+					height="200"
+					src={walk?.mapImage?.url}
+					alt={walk?.mapImage?.altText}
+					loading="eager"
+				/>
+			</div>
+		</section>
+		{
+			walk?.content && walk?.content !== "" && (
+				<section class="w-full p-10">
+					<h2>About This Walk:</h2>
+					<article
+						id="walk-content"
+						class="prose-h1:font-heading prose-h2:font-heading prose-p:font-body prose prose-lg"
+						set:html={walk?.content}
+					/>
+				</section>
+			)
+		}
+		{
+			walk?.photos?.length > 0 && (
+				<section id="walk-photos" class="w-full p-10">
+					<h2 class="font-heading mb-8 text-2xl font-semibold">Walk Photos:</h2>
+					<PhotosSlider photos={walk?.photos} />
+				</section>
+			)
+		}
+	</article>
+</div>

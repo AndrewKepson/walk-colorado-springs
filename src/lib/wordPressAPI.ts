@@ -148,50 +148,6 @@ export const getWordPressPostBySlug = async (slug) => {
 	return data?.post;
 };
 
-// export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
-// 	const data = await fetchWordPressAPI<WalksData>(`
-//     {
-//       walks {
-//         edges {
-//           node {
-//             id
-//             title(format: RENDERED)
-//             walkFields {
-//               date
-//               miles
-//               walkNumber
-//               mapImage {
-//                 node {
-//                   sourceUrl
-//                   altText
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   `);
-
-// 	if (!data?.walks?.edges) {
-// 		console.error("Unexpected data structure:", data);
-// 		return [];
-// 	}
-
-// 	return data.walks.edges.map(({ node }) => {
-// 		const { walkFields, ...rest } = node;
-// 		const { mapImage, ...otherWalkFields } = walkFields;
-// 		return {
-// 			...rest,
-// 			...otherWalkFields,
-// 			mapImage: {
-// 				url: mapImage.node.sourceUrl,
-// 				altText: mapImage.node.altText,
-// 			},
-// 		};
-// 	});
-// };
-
 export const getAllWalks = async (limit: number = Infinity): Promise<FlattenedWalk[]> => {
 	const walkQuery = (cursor: string | null) => `
     query GetAllWalks($cursor: String) {
@@ -210,6 +166,18 @@ export const getAllWalks = async (limit: number = Infinity): Promise<FlattenedWa
                   altText
                 }
               }
+              area
+              neighborhood
+              content
+              photos {
+                edges {
+                  node {
+                    id
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
             }
           }
           cursor
@@ -224,14 +192,29 @@ export const getAllWalks = async (limit: number = Infinity): Promise<FlattenedWa
 
 	const walkTransformer = (node: any): FlattenedWalk => {
 		const { walkFields, ...rest } = node;
-		const { mapImage, ...otherWalkFields } = walkFields;
+		const { mapImage, photos, ...otherWalkFields } = walkFields || {};
 		return {
-			...rest,
-			...otherWalkFields,
-			mapImage: {
-				url: mapImage.node.sourceUrl,
-				altText: mapImage.node.altText,
-			},
+			id: rest.id || "",
+			title: rest.title || "",
+			date: otherWalkFields.date || "",
+			miles: otherWalkFields.miles || 0,
+			walkNumber: otherWalkFields.walkNumber || 0,
+			mapImage: mapImage?.node
+				? {
+						url: mapImage.node.sourceUrl || "",
+						altText: mapImage.node.altText || "",
+					}
+				: { url: "", altText: "" },
+			// Extract the first string from the array, or default to an empty string
+			area: Array.isArray(otherWalkFields.area) ? otherWalkFields.area[0] || "" : "",
+			neighborhood: Array.isArray(otherWalkFields.neighborhood) ? otherWalkFields.neighborhood[0] || "" : "",
+			content: otherWalkFields.content || "",
+			photos:
+				photos?.edges?.map((edge: any) => ({
+					id: edge.node.id || "",
+					sourceUrl: edge.node.sourceUrl || "",
+					altText: edge.node.altText || "",
+				})) || [],
 		};
 	};
 

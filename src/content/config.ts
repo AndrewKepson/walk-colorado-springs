@@ -1,19 +1,7 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
 import { getAllWalks } from "@lib/wordPressAPI";
+import { walkSchema } from "./wordPressSchemas";
 
-const walkSchema = z.object({
-	id: z.string(),
-	title: z.string(),
-	date: z.string(),
-	miles: z.number(),
-	walkNumber: z.number(),
-	mapImage: z.object({
-		url: z.string(),
-		altText: z.string(),
-	}),
-});
-
-// Define the Walks collection
 export const walksCollection = defineCollection({
 	schema: walkSchema,
 	loader: async () => {

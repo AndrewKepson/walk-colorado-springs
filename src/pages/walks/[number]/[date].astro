@@ -1,0 +1,39 @@
+---
+interface Props {
+	walk: {
+		data: FlattenedWalk;
+	};
+}
+
+import { getCollection } from "astro:content";
+import { formatWalkDate } from "@lib/functions";
+import { type FlattenedWalk } from "@lib/wordPressAPI.types";
+
+import Layout from "@components/layouts/Layout.astro";
+import Walk from "./_components/Walk.astro";
+
+export const getStaticPaths = async () => {
+	const walks = await getCollection("walks");
+
+	return walks.map((walk) => ({
+		params: {
+			number: walk.data.walkNumber.toString(),
+			date: formatWalkDate(walk?.data?.date, "ISO"),
+		},
+		props: { walk },
+	}));
+};
+
+const {
+	walk: { data: walk },
+} = Astro.props;
+console.log(walk);
+---
+
+<Layout
+	title={`${walk?.title} | Walk Colorado Springs`}
+	description={`Walk number ${walk?.walkNumber} on my journey to walk every street in Colorado Springs, one block at a time, completed on ${formatWalkDate(walk?.date, "readable")}.`}
+	canonical={`/walks/${walk?.walkNumber}/${formatWalkDate(walk?.date, "ISO")}`}
+>
+	<Walk walk={walk} />
+</Layout>
