@@ -11,4 +11,7 @@ export default defineConfig({
 		domains: ["jp7lua9fr7kk.walkcoloradosprings.com"],
 		remotePatterns: [{ protocol: "https" }],
 	},
+	experimental: {
+		contentLayer: true,
+	},
 });

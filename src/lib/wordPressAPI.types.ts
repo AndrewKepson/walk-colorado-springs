@@ -1,3 +1,23 @@
+// General Types
+export interface PageInfo {
+	hasNextPage: boolean;
+	endCursor: string | null;
+}
+
+export interface Edge<T> {
+	node: T;
+	cursor: string;
+}
+
+export interface PaginatedResponse<T> {
+	edges: Edge<T>[];
+	pageInfo: PageInfo;
+}
+
+export interface QueryResult<T> {
+	[key: string]: PaginatedResponse<T>;
+}
+
 // Walk Data types
 export interface MapImage {
 	url: string;

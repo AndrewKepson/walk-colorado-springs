@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import { type FlattenedWalk, type WalksData } from "./wordPressAPI.types";
+import { type PaginatedResponse, type QueryResult, type FlattenedWalk, type WalksData } from "./wordPressAPI.types";
 
 const WP_API_URL = process.env.WPGRAPHQL_ENDPOINT;
 
@@ -27,6 +27,55 @@ const fetchWordPressAPI = async <T>(query: string, variables: Record<string, unk
 	}
 
 	return json.data;
+};
+
+const paginatedQuery = async <T, U = T>(
+	queryGenerator: (cursor: string | null) => string,
+	dataTransformer: (node: T) => U,
+	limit: number = Infinity,
+	batchSize: number = 100
+): Promise<U[]> => {
+	let allItems: U[] = [];
+	let cursor: string | null = null;
+	let hasMore = true;
+
+	const fetchBatch = async (): Promise<PaginatedResponse<T> | null> => {
+		const query = queryGenerator(cursor);
+		const data = await fetchWordPressAPI<QueryResult<T>>(query, { cursor });
+		const queryKey = Object.keys(data)[0];
+		return data[queryKey] || null;
+	};
+
+	while (hasMore && allItems.length < limit) {
+		try {
+			const response = await fetchBatch();
+			if (!response) break;
+
+			const newItems = response.edges.map((edge) => dataTransformer(edge.node));
+			allItems = [...allItems, ...newItems];
+			cursor = response.pageInfo.endCursor;
+			hasMore = response.pageInfo.hasNextPage;
+
+			console.log(`Fetched ${newItems.length} items, total: ${allItems.length}, hasNextPage: ${hasMore}`);
+
+			if (allItems.length >= limit) {
+				console.log(`Limit of ${limit} reached or exceeded.`);
+				break;
+			}
+		} catch (error) {
+			console.error("Failed to fetch items:", error);
+			break;
+		}
+	}
+
+	console.log(`Fetched a total of ${allItems.length} items.`);
+
+	// Truncate the array if it exceeds the limit
+	if (allItems.length > limit) {
+		allItems = allItems.slice(0, limit);
+	}
+
+	return allItems;
 };
 
 export const getAllWordPressPages = async () => {
@@ -99,10 +148,54 @@ export const getWordPressPostBySlug = async (slug) => {
 	return data?.post;
 };
 
-export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
-	const data = await fetchWordPressAPI<WalksData>(`
-    {
-      walks {
+// export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
+// 	const data = await fetchWordPressAPI<WalksData>(`
+//     {
+//       walks {
+//         edges {
+//           node {
+//             id
+//             title(format: RENDERED)
+//             walkFields {
+//               date
+//               miles
+//               walkNumber
+//               mapImage {
+//                 node {
+//                   sourceUrl
+//                   altText
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   `);
+
+// 	if (!data?.walks?.edges) {
+// 		console.error("Unexpected data structure:", data);
+// 		return [];
+// 	}
+
+// 	return data.walks.edges.map(({ node }) => {
+// 		const { walkFields, ...rest } = node;
+// 		const { mapImage, ...otherWalkFields } = walkFields;
+// 		return {
+// 			...rest,
+// 			...otherWalkFields,
+// 			mapImage: {
+// 				url: mapImage.node.sourceUrl,
+// 				altText: mapImage.node.altText,
+// 			},
+// 		};
+// 	});
+// };
+
+export const getAllWalks = async (limit: number = Infinity): Promise<FlattenedWalk[]> => {
+	const walkQuery = (cursor: string | null) => `
+    query GetAllWalks($cursor: String) {
+      walks(first: 100, after: $cursor) {
         edges {
           node {
             id
@@ -119,17 +212,17 @@ export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
               }
             }
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
-  `);
+  `;
 
-	if (!data?.walks?.edges) {
-		console.error("Unexpected data structure:", data);
-		return [];
-	}
-
-	return data.walks.edges.map(({ node }) => {
+	const walkTransformer = (node: any): FlattenedWalk => {
 		const { walkFields, ...rest } = node;
 		const { mapImage, ...otherWalkFields } = walkFields;
 		return {
@@ -140,5 +233,7 @@ export const getAllWalks = async (): Promise<FlattenedWalk[]> => {
 				altText: mapImage.node.altText,
 			},
 		};
-	});
+	};
+
+	return paginatedQuery<any, FlattenedWalk>(walkQuery, walkTransformer, limit);
 };
