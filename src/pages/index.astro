@@ -1,9 +1,8 @@
 ---
-import { getAllWalks } from "@lib/wordPressAPI";
+import { allWalks } from "@lib/store";
 import { useWordPressAPI } from "@lib/hooks";
 import { getNumberOfWalks, getTotalMilesWalked } from "@lib/functions";
 
-const allWalks = await getAllWalks();
 const walkData = {
 	totalWalks: getNumberOfWalks(allWalks),
 	totalMiles: getTotalMilesWalked(allWalks),
@@ -12,6 +11,7 @@ const walkData = {
 import Layout from "../components/layouts/Layout.astro";
 import Hero from "./_components/Hero.astro";
 import WalkStats from "./_components/WalkStats.astro";
+import LatestWalks from "./_components/LatestWalks.astro";
 
 const pageData = await useWordPressAPI.getPageBySlug("home");
 ---
@@ -19,4 +19,5 @@ const pageData = await useWordPressAPI.getPageBySlug("home");
 <Layout title={pageData?.seo?.title} description={pageData?.seo?.description} canonical="/">
 	<Hero />
 	<WalkStats walkData={walkData} />
+	<LatestWalks latestWalks={allWalks.slice(0, 3)} />
 </Layout>

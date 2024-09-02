@@ -1,0 +1,44 @@
+---
+import type { FlattenedWalk } from "@lib/wordPressAPI.types";
+import { Image } from "astro:assets";
+import { formatWalkDate } from "@lib/functions";
+interface Props {
+	latestWalks: FlattenedWalk[];
+}
+
+const { latestWalks } = Astro.props;
+---
+
+<section id="latest-walks" class="overflow-hidden bg-white py-28">
+	<div class="container mx-auto px-4">
+        <h2 class="font-heading font-bold mb-8 text-2xl md:text-3xl">Latest Walks</h2>
+		<div class="-m-9 flex flex-wrap latest-walk-card">
+			{
+				latestWalks.map((walk) => (
+					<div class="w-full p-9 md:w-1/2 lg:w-1/3">
+						<div class="group">
+							<div class="mb-6 overflow-hidden rounded-lg">
+								<Image
+									class="w-3/4 md:w-full transform rounded-lg transition duration-500 hover:scale-105"
+									src={walk?.mapImage?.url}
+									alt={walk?.mapImage?.altText}
+									width="300"
+									height="300"
+                                    loading="lazy"
+								/>
+							</div>
+							<p class="mb-3 font-heading text-xl font-semibold">Walk {walk?.walkNumber}</p>
+
+							<p class="mb-4 font-semibold font-body tracking-tight text-cityscape-blue-500">
+								{walk?.area} / {walk?.neighborhood}
+							</p>
+							<span class="font-body text-sm tracking-tight">
+								{formatWalkDate(walk?.date, "readable")}
+							</span>
+						</div>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
