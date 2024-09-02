@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets";
+
+import Layout from "@components/layouts/Layout.astro";
+---
+
+<Layout title="Thank You For Signing Up | Walk Colorado Springs">
+	<section id="thank-you">
+		<div class="container mx-auto">
+			<section class="relative bg-gray-800 text-white" data-pg-collapsed>
+				<Image
+					src={import("@images/walk_colorado_springs_graphic_8.png")}
+					class="absolute inset-0 h-full w-full object-cover object-center"
+					alt="A graphic depicting a walking shoe in front of the Colorado Springs skyline."
+					width="1080"
+					height="720"
+				/>
+				<div class="container relative mx-auto px-4 py-48">
+					<div class="-mx-4 flex flex-wrap">
+						<div class="mx-auto w-full px-4 text-center lg:w-8/12">
+							<h1 class="mb-4 text-6xl font-extrabold">Thank You For Signing Up!</h1>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</section>
+</Layout>

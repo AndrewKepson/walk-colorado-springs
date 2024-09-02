@@ -1,0 +1,47 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section class="overflow-hidden bg-white py-16 xl:pb-56">
+	<div class="container mx-auto px-4">
+		<div class="mx-auto max-w-md text-center">
+			<a class="mb-12 inline-block" href="#">
+				<Image
+					src={import("@images/downtown_colorado_springs_graphic.png")}
+					alt="A graphic depicting the walkable streets of downtown Colorado Springs on a winter day."
+				/>
+			</a>
+			<h2 class="tracking-px-n mb-4 text-center font-heading text-6xl font-bold leading-tight md:text-7xl">
+				Sign Up
+			</h2>
+			<p class="mb-12 text-lg font-medium leading-normal text-cityscape-blue-800">
+				Sign up for infrequent updates and maybe group walks eventually. I promise not to spam you or sell your
+				data.
+			</p>
+			<form name="sign up" method="POST" data-netlify="true" action="/sign-up/thank-you">
+				<label class="mb-5 block">
+					<input
+						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3.5 font-body font-medium text-gray-500 placeholder-gray-500 outline-none focus:ring focus:ring-sunset-orange-400"
+						id="sign-up-name"
+						name="name"
+						type="text"
+						placeholder="First & Last Name"
+					/>
+				</label>
+				<label class="mb-5 block">
+					<input
+						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3.5 font-body font-medium text-gray-500 placeholder-gray-500 outline-none focus:ring focus:ring-sunset-orange-400"
+						id="sign-up-email"
+						name="email"
+						type="text"
+						placeholder="Email Address"
+					/>
+				</label>
+				<button
+					class="shadow-4xl walking-transition mb-8 w-full rounded-sm bg-sunset-orange-500 px-9 py-4 font-semibold text-white hover:bg-sunset-orange-700"
+					type="button">Sign Up</button
+				>
+			</form>
+		</div>
+	</div>
+</section>
