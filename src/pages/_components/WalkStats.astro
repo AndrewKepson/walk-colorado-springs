@@ -13,24 +13,24 @@ const { walkData } = Astro.props;
 	<div class="container mx-auto px-4">
 		<div class="-mx-4 -mb-8 flex flex-wrap items-center">
 			<div class="mb-8 w-full px-4 text-center md:w-1/2">
-				<h3
+				<p
 					id="total-walks-counter"
-					class="font-heading text-cityscape-blue-500 mb-2 text-5xl font-bold lg:text-6xl"
+					class="mb-2 font-heading text-5xl font-bold text-cityscape-blue-500 lg:text-6xl"
 					data-total-walks={walkData?.totalWalks}
 				>
 					{walkData?.totalWalks}
-				</h3>
-				<p class="text-cityscape-blue-900 font-body text-lg">Total Walks</p>
+				</p>
+				<p class="font-body text-lg text-cityscape-blue-900">Total Walks</p>
 			</div>
 			<div class="mb-8 w-full px-4 text-center md:w-1/2">
-				<h3
+				<p
 					id="total-miles-counter"
-					class="font-heading text-sunset-orange-500 mb-2 text-5xl font-bold lg:text-6xl"
+					class="mb-2 font-heading text-5xl font-bold text-sunset-orange-500 lg:text-6xl"
 					data-miles-walked={walkData?.totalMiles}
 				>
 					{walkData?.totalMiles}
-				</h3>
-				<p class="font-body text-cityscape-blue-900 text-lg">Miles Walked</p>
+				</p>
+				<p class="font-body text-lg text-cityscape-blue-900">Miles Walked</p>
 			</div>
 		</div>
 	</div>
