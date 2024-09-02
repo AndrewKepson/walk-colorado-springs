@@ -1,7 +1,7 @@
 ---
-import { getAllWalks } from "@lib/wordPressAPI";
+import { getCollection } from "astro:content";
 
-const latestWalks = await getAllWalks();
+const walks = await getCollection("walks");
 
 import Layout from "@components/layouts/Layout.astro";
 import WalksList from "./_components/WalksList.astro";
@@ -12,5 +12,5 @@ import WalksList from "./_components/WalksList.astro";
 	description="See the latest walks I have completed on my journey toward walking every street in Colorado Springs."
 	canonical="/walks"
 >
-	<WalksList walks={latestWalks} />
+	<WalksList walks={walks?.map((walk) => walk.data)} />
 </Layout>

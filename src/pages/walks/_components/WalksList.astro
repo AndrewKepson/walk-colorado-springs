@@ -1,21 +1,12 @@
 ---
-export interface WalkData {
-	id: string;
-	title: string;
-	date: string;
-	miles: number;
-	walkNumber: number;
-	mapImage: {
-		url: string;
-		altText: string;
-	};
-}
+import { type FlattenedWalk } from "@lib/wordPressAPI.types";
 
 interface Props {
-	walks: WalkData[];
+	walks: FlattenedWalk[];
 }
 
 const { walks } = Astro.props;
+console.log(walks)
 
 import WalkCard from "./WalkCard.astro";
 ---

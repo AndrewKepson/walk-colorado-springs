@@ -1,5 +1,6 @@
 ---
 import { getAllWalks } from "@lib/wordPressAPI";
+import { useWordPressAPI } from "@lib/store";
 import { getNumberOfWalks, getTotalMilesWalked } from "@lib/functions";
 
 const allWalks = await getAllWalks();
@@ -11,13 +12,11 @@ const walkData = {
 import Layout from "../components/layouts/Layout.astro";
 import Hero from "./_components/Hero.astro";
 import WalkStats from "./_components/WalkStats.astro";
+
+const pageData = await useWordPressAPI.getWordPressPageBySlug("home");
 ---
 
-<Layout
-	title="Walking Every Street in Colorado Springs, One Block at a Time | Walk Colorado Springs"
-	description="Walking every street in Colorado Springs, one block at a time. Feel free to follow along or join me!"
-	canonical="/"
->
+<Layout title={pageData?.seo?.title} description={pageData?.seo?.description} canonical="/">
 	<Hero />
 	<WalkStats walkData={walkData} />
 </Layout>
