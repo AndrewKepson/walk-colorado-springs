@@ -1,0 +1,59 @@
+---
+import type { GetStaticPathsResult, Page } from "astro";
+import { type FlattenedWalk } from "@lib/wordPressAPI.types";
+import { allWalks } from "@lib/store";
+import { formatWalkDate } from "@lib/functions";
+import Layout from "@components/layouts/Layout.astro";
+
+interface Props {
+	page: Page<FlattenedWalk> & { sortedPageWalks?: FlattenedWalk[] };
+}
+
+export const getStaticPaths = async ({ paginate }): Promise<GetStaticPathsResult> => {
+	console.log("Total walks:", allWalks.length);
+
+	return paginate(allWalks, {
+		pageSize: 10,
+		getPageProps: ({ pageEntries }) => {
+			console.log("Page entries:", pageEntries.length);
+			const sortedPageWalks = [...pageEntries].sort((a, b) => b.walkNumber - a.walkNumber);
+			return { sortedPageWalks };
+		},
+	}).slice(1); // Remove the first page
+};
+
+const { page } = Astro.props;
+const sortedPageWalks = page.sortedPageWalks ?? page.data;
+const currentPage = page.currentPage;
+const totalPages = page.lastPage;
+
+console.log("Current page:", currentPage);
+console.log("Sorted page walks:", sortedPageWalks?.length);
+---
+
+<Layout title={`Walks Archive - Page ${currentPage}`}>
+	<h1>Walks Archive - Page {currentPage}</h1>
+
+	{
+		sortedPageWalks && sortedPageWalks.length > 0 ? (
+			<ul>
+				{sortedPageWalks.map((walk) => (
+					<li>
+						<a href={`/walks/${walk.walkNumber}/${formatWalkDate(walk.date, "ISO")}`}>
+							Walk {walk.walkNumber}: {walk.title} - {formatWalkDate(walk.date)}
+						</a>
+					</li>
+				))}
+			</ul>
+		) : (
+			<p>No walks found for this page.</p>
+		)
+	}
+
+	<nav>
+		{page.url.prev && <a href={page.url.prev}>Previous</a>}
+		{page.url.next && <a href={page.url.next}>Next</a>}
+	</nav>
+
+	<p>Page {currentPage} of {totalPages}</p>
+</Layout>

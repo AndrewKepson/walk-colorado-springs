@@ -15,32 +15,38 @@ const { walk } = Astro.props;
 
 <div class="container mx-auto py-12">
 	<article id="walk">
-		<h1 id="walk-title" class="font-heading my-4 text-5xl font-bold" data-pg-collapsed>
+		<h1 id="walk-title" class="my-4 font-heading text-5xl font-bold">
 			Walk <span id="walk-number">{walk?.walkNumber}</span>: {formatWalkDate(walk?.date, "readable")}
 		</h1>
-		<section id="walk-stats" class="font-body grid gap-2 text-lg md:grid-cols-2 md:text-xl" data-pg-collapsed>
-			<div data-pg-collapsed>
+		<section id="walk-stats" class="grid gap-2 font-body text-lg md:grid-cols-2 md:text-xl">
+			<div>
 				<p class="font-bold">
-					Distance: <span id="walk-distance" class="text-cityscape-blue-500 font-semibold">{walk?.miles} mi</span>
+					Distance: <span id="walk-distance" class="font-semibold text-cityscape-blue-500"
+						>{walk?.miles} mi</span
+					>
 				</p>
 			</div>
 			<div>
 				<p class="font-bold">
-					Date: <span id="walk-date" class="text-cityscape-blue-500 font-semibold"
-						>{formatWalkDate(walk?.date, "readable")}</span>
+					Date: <span id="walk-date" class="font-semibold text-cityscape-blue-500"
+						>{formatWalkDate(walk?.date, "readable")}</span
+					>
 				</p>
 			</div>
-			<div data-pg-collapsed>
-				<p class="font-bold">Area: <span id="walk-area" class="text-cityscape-blue-500 font-semibold">{walk?.area}</span></p>
-			</div>
-			<div data-pg-collapsed>
+			<div>
 				<p class="font-bold">
-					Neighborhood: <span id="walk-neighborhood" class="text-cityscape-blue-500 font-semibold"
-						>{walk?.neighborhood}</span>
+					Area: <span id="walk-area" class="font-semibold text-cityscape-blue-500">{walk?.area}</span>
+				</p>
+			</div>
+			<div>
+				<p class="font-bold">
+					Neighborhood: <span id="walk-neighborhood" class="font-semibold text-cityscape-blue-500"
+						>{walk?.neighborhood}</span
+					>
 				</p>
 			</div>
 		</section>
-		<section class="w-full p-10" data-pg-collapsed>
+		<section class="w-full p-10">
 			<div class="flex w-full justify-center">
 				<Image
 					id="walk-map"
@@ -59,7 +65,7 @@ const { walk } = Astro.props;
 					<h2>About This Walk:</h2>
 					<article
 						id="walk-content"
-						class="prose-h1:font-heading prose-h2:font-heading prose-p:font-body prose prose-lg"
+						class="prose prose-lg prose-h1:font-heading prose-h2:font-heading prose-p:font-body"
 						set:html={walk?.content}
 					/>
 				</section>
@@ -68,7 +74,7 @@ const { walk } = Astro.props;
 		{
 			walk?.photos?.length > 0 && (
 				<section id="walk-photos" class="w-full p-10">
-					<h2 class="font-heading mb-8 text-2xl font-semibold">Walk Photos:</h2>
+					<h2 class="mb-8 font-heading text-2xl font-semibold">Walk Photos:</h2>
 					<PhotosSlider photos={walk?.photos} />
 				</section>
 			)

@@ -2,31 +2,58 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import { type PaginatedResponse, type QueryResult, type FlattenedWalk, type WalksData } from "./wordPressAPI.types";
+import {
+	type PaginatedResponse,
+	type QueryResult,
+	type FlattenedPage,
+	type FlattenedWalk,
+	type WalksData,
+} from "./wordPressAPI.types";
 
 const WP_API_URL = process.env.WPGRAPHQL_ENDPOINT;
 
-const fetchWordPressAPI = async <T>(query: string, variables: Record<string, unknown> = {}): Promise<T> => {
+export const fetchWordPressAPI = async (query: string, variables: Record<string, unknown> = {}, retries = 3) => {
 	if (!WP_API_URL) {
 		throw new Error("WPGRAPHQL_ENDPOINT is not set in the environment variables");
 	}
 
-	const headers = { "Content-Type": "application/json" };
+	const headers = {
+		"Content-Type": "application/json",
+	};
 
-	const res = await fetch(WP_API_URL, {
-		method: "POST",
-		headers,
-		body: JSON.stringify({ query, variables }),
-	});
+	for (let attempt = 0; attempt < retries; attempt++) {
+		try {
+			const res = await fetch(WP_API_URL, {
+				method: "POST",
+				headers,
+				body: JSON.stringify({ query, variables }),
+			});
 
-	const json = await res.json();
+			if (!res.ok) {
+				throw new Error(`HTTP error! status: ${res.status}`);
+			}
 
-	if (json.errors) {
-		console.log(json.errors);
-		throw new Error("Failed to fetch API");
+			const contentType = res.headers.get("content-type");
+			if (!contentType || !contentType.includes("application/json")) {
+				throw new Error("Unexpected content type: " + contentType);
+			}
+
+			const json = await res.json();
+
+			if (json.errors) {
+				throw new Error("GraphQL errors: " + JSON.stringify(json.errors));
+			}
+
+			return json.data;
+		} catch (error) {
+			console.error(`Attempt ${attempt + 1} failed:`, error);
+			if (attempt === retries - 1) {
+				throw error;
+			}
+			// Wait for a short time before retrying
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+		}
 	}
-
-	return json.data;
 };
 
 const paginatedQuery = async <T, U = T>(
@@ -78,22 +105,81 @@ const paginatedQuery = async <T, U = T>(
 	return allItems;
 };
 
-export const getAllWordPressPages = async () => {
-	const data = await fetchWordPressAPI(`
-    {
-      pages(first: 10000) {
-        edges {
-          node {
-            slug
-          }
-        }
-      }
-    }
-    `);
-	return data?.pages;
+export const getAllPages = async (limit: number = Infinity): Promise<FlattenedPage[]> => {
+	const pageQuery = (cursor: string | null) => `
+	  query GetAllPages($cursor: String) {
+		pages(first: 100, after: $cursor) {
+		  edges {
+			node {
+			  id
+			  slug
+			  title
+			  content(format: RENDERED)
+			  seo {
+				description
+				title
+				openGraph {
+				  image {
+					url
+				  }
+				}
+			  }
+			}
+			cursor
+		  }
+		  pageInfo {
+			hasNextPage
+			endCursor
+		  }
+		}
+	  }
+	`;
+
+	const pageTransformer = (node: any): FlattenedPage => {
+		try {
+			return {
+				id: node.id || "",
+				slug: node.slug || "",
+				title: node.title || "",
+				content: node.content || "",
+				seo: {
+					description: node.seo?.description || "",
+					title: node.seo?.title || "",
+					openGraph: {
+						image: {
+							url: node.seo?.openGraph?.image?.url || "",
+						},
+					},
+				},
+			};
+		} catch (error) {
+			console.error("Error transforming page node:", error);
+			console.error("Problematic node:", JSON.stringify(node, null, 2));
+			throw new Error(`Failed to transform page node: ${error.message}`);
+		}
+	};
+
+	try {
+		const pages = await paginatedQuery<any, FlattenedPage>(pageQuery, pageTransformer, limit);
+		console.log(`Successfully fetched ${pages.length} pages`);
+		return pages;
+	} catch (error) {
+		console.error("Error in getAllPages:", error);
+		if (error.response) {
+			console.error("Response data:", error.response.data);
+			console.error("Response status:", error.response.status);
+			console.error("Response headers:", error.response.headers);
+		} else if (error.request) {
+			console.error("No response received. Request:", error.request);
+		} else {
+			console.error("Error message:", error.message);
+		}
+		console.error("Error config:", error.config);
+		throw new Error(`Failed to fetch pages: ${error.message}`);
+	}
 };
 
-export const getWordPressPageBySlug = async (slug) => {
+export const getPageBySlug = async (slug) => {
 	const data = await fetchWordPressAPI(`
     {
       page(id: "${slug}", idType: URI) {
@@ -116,7 +202,7 @@ export const getWordPressPageBySlug = async (slug) => {
 	return data?.page;
 };
 
-export const getAllWordPressPosts = async () => {
+export const getAllPosts = async () => {
 	const data = await fetchWordPressAPI(`
     {
         posts {
@@ -133,7 +219,7 @@ export const getAllWordPressPosts = async () => {
 	return data?.posts;
 };
 
-export const getWordPressPostBySlug = async (slug) => {
+export const getPostBySlug = async (slug) => {
 	const data = await fetchWordPressAPI(`
     {
         post(id: "${slug}", idType: SLUG) {
@@ -191,30 +277,30 @@ export const getAllWalks = async (limit: number = Infinity): Promise<FlattenedWa
   `;
 
 	const walkTransformer = (node: any): FlattenedWalk => {
-		const { walkFields, ...rest } = node;
-		const { mapImage, photos, ...otherWalkFields } = walkFields || {};
+		const { id, title, walkFields } = node;
+		const { mapImage, photos, ...otherFields } = walkFields || {};
+
 		return {
-			id: rest.id || "",
-			title: rest.title || "",
-			date: otherWalkFields.date || "",
-			miles: otherWalkFields.miles || 0,
-			walkNumber: otherWalkFields.walkNumber || 0,
-			mapImage: mapImage?.node
-				? {
-						url: mapImage.node.sourceUrl || "",
-						altText: mapImage.node.altText || "",
-					}
-				: { url: "", altText: "" },
-			// Extract the first string from the array, or default to an empty string
-			area: Array.isArray(otherWalkFields.area) ? otherWalkFields.area[0] || "" : "",
-			neighborhood: Array.isArray(otherWalkFields.neighborhood) ? otherWalkFields.neighborhood[0] || "" : "",
-			content: otherWalkFields.content || "",
-			photos:
-				photos?.edges?.map((edge: any) => ({
-					id: edge.node.id || "",
-					sourceUrl: edge.node.sourceUrl || "",
-					altText: edge.node.altText || "",
-				})) || [],
+			id: id || "",
+			title: title || "",
+			date: otherFields.date || "",
+			miles: typeof otherFields.miles === "number" ? otherFields.miles : 0,
+			walkNumber: typeof otherFields.walkNumber === "number" ? otherFields.walkNumber : 0,
+			mapImage: {
+				url: mapImage?.node?.sourceUrl || "",
+				altText: mapImage?.node?.altText || "",
+			},
+			area: Array.isArray(otherFields.area) && otherFields.area.length > 0 ? otherFields.area[0] : "",
+			neighborhood:
+				Array.isArray(otherFields.neighborhood) && otherFields.neighborhood.length > 0
+					? otherFields.neighborhood[0]
+					: "",
+			content: otherFields.content || "",
+			photos: (photos?.edges || []).map((edge: any) => ({
+				id: edge.node.id || "",
+				sourceUrl: edge.node.sourceUrl || "",
+				altText: edge.node.altText || "",
+			})),
 		};
 	};
 

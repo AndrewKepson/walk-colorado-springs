@@ -18,6 +18,23 @@ export interface QueryResult<T> {
 	[key: string]: PaginatedResponse<T>;
 }
 
+// Page Types
+export interface FlattenedPage {
+	id: string;
+	slug: string;
+	title: string;
+	content: string;
+	seo: {
+		description: string;
+		title: string;
+		openGraph: {
+			image: {
+				url: string;
+			};
+		};
+	};
+}
+
 // Walk Data types
 export interface MapImage {
 	url: string;
@@ -40,8 +57,8 @@ export interface WalkFields {
 			altText: string;
 		};
 	};
-	area: string;
-	neighborhood: string;
+	area: string[];
+	neighborhood: string[];
 	content: string;
 	photos: {
 		edges: {
@@ -65,9 +82,8 @@ export interface WalksData {
 		edges: WalkEdge[];
 	};
 }
-export interface FlattenedWalk {
-	id: string;
-	title: string;
+
+export interface FlattenedWalk extends Omit<WalkNode, "walkFields"> {
 	date: string;
 	miles: number;
 	walkNumber: number;
@@ -76,11 +92,4 @@ export interface FlattenedWalk {
 	neighborhood: string;
 	content: string;
 	photos: Photo[];
-}
-
-export interface FlattenedWalk extends Omit<WalkNode, "walkFields"> {
-	date: string;
-	miles: number;
-	walkNumber: number;
-	mapImage: MapImage;
 }

@@ -2,10 +2,10 @@
 import { Image } from "astro:assets";
 ---
 
-<header class="container mx-auto" id="site-header" data-pg-name="Header" data-pg-collapsed>
+<header class="container mx-auto" id="site-header">
 	<nav class="flex flex-wrap items-center bg-white px-4 py-5">
-		<a href="/" class="font-heading text-sunset-orange-500 mr-auto text-xl font-medium uppercase"
-			><Image
+		<a href="/" class="mr-auto font-heading text-xl font-medium uppercase text-sunset-orange-500">
+			<Image
 				src={import("@images/walk-colorado-springs-logo.png")}
 				width="150"
 				alt="Walk Colorado Springs Logo"
@@ -14,41 +14,88 @@ import { Image } from "astro:assets";
 			/> Walk Colorado Springs
 		</a>
 		<button
-			class="text-sunset-orange-500 hover:bg-sunset-orange-500 rounded px-3 py-2 hover:text-white lg:hidden"
-			data-name="nav-toggler"
-			data-pg-ia='{"l":[{"name":"NabMenuToggler","trg":"click","a":{"l":[{"t":"^nav|[data-name=nav-menu]","l":[{"t":"set","p":0,"d":0,"l":{"class.remove":"hidden"}}]},{"t":"#gt# span:nth-of-type(1)","l":[{"t":"tween","p":0,"d":0.2,"l":{"rotationZ":45,"yPercent":300}}]},{"t":"#gt# span:nth-of-type(2)","l":[{"t":"tween","p":0,"d":0.2,"l":{"autoAlpha":0}}]},{"t":"#gt# span:nth-of-type(3)","l":[{"t":"tween","p":0,"d":0.2,"l":{"rotationZ":-45,"yPercent":-300}}]}]},"pdef":"true","trev":"true"}]}'
-			data-pg-ia-apply="$nav [data-name=nav-toggler]"
+			id="nav-toggler"
+			class="rounded px-3 py-2 text-sunset-orange-500 hover:bg-sunset-orange-500 hover:text-white lg:hidden"
 		>
-			<span class="my-1 block w-6 border-b-2 border-current"></span>
-			<span class="my-1 block w-6 border-b-2 border-current"></span>
-			<span class="my-1 block w-6 border-b-2 border-current"></span>
+			<span class="bar my-1 block w-6 border-b-2 border-current"></span>
+			<span class="bar my-1 block w-6 border-b-2 border-current"></span>
+			<span class="bar my-1 block w-6 border-b-2 border-current"></span>
 		</button>
-		<div
-			class="hidden w-full space-y-2 lg:flex lg:w-auto lg:items-center lg:space-x-4 lg:space-y-0"
-			data-name="nav-menu"
-		>
+		<div id="nav-menu" class="hidden w-full space-y-2 lg:flex lg:w-auto lg:items-center lg:space-x-4 lg:space-y-0">
 			<div class="flex flex-col lg:flex-row">
 				<a
 					href="/"
-					class="font-heading walking-transition hover:text-sunset-orange-500 px-0 py-2 font-light uppercase lg:px-4"
-					>Home</a
+					class="walking-transition px-0 py-2 font-heading font-light uppercase hover:text-sunset-orange-500 lg:px-4"
 				>
+					Home
+				</a>
 				<!-- <a
-					href="/about"
-					class="font-heading walking-transition hover:text-sunset-orange-500 px-0 py-2 font-light uppercase lg:px-4"
-					>About</a
-				> -->
+          href="/about"
+          class="font-heading walking-transition hover:text-sunset-orange-500 px-0 py-2 font-light uppercase lg:px-4"
+        >
+          About
+        </a> -->
 				<a
 					href="/walks"
-					class="font-heading walking-transition hover:text-sunset-orange-500 px-0 py-2 font-light uppercase lg:px-4"
-					>Latest Walks</a
+					class="walking-transition px-0 py-2 font-heading font-light uppercase hover:text-sunset-orange-500 lg:px-4"
 				>
+					Latest Walks
+				</a>
 			</div>
 			<a
 				href="/sign-up"
-				class="bg-sunset-orange-500 font-body walking-transition hover:bg-sunset-orange-600 inline-block rounded-sm px-5 py-2 font-light uppercase text-white"
-				>Sign Up</a
+				class="walking-transition inline-block rounded-sm bg-sunset-orange-500 px-5 py-2 font-body font-light uppercase text-white hover:bg-sunset-orange-600"
 			>
+				Sign Up
+			</a>
 		</div>
 	</nav>
 </header>
+
+<style>
+	#nav-toggler.open .bar {
+		position: relative;
+		left: 3px;
+	}
+
+	#nav-toggler .bar {
+		display: block;
+		width: 25px;
+		height: 3px;
+		margin: 5px auto;
+		background-color: #ffa500;
+		transition:
+			transform 0.2s,
+			opacity 0.2s;
+	}
+
+	#nav-toggler.open .bar:nth-of-type(1) {
+		transform: rotate(45deg) translateY(7px) translateX(4px);
+	}
+
+	#nav-toggler.open .bar:nth-of-type(2) {
+		opacity: 0;
+	}
+
+	#nav-toggler.open .bar:nth-of-type(3) {
+		transform: rotate(-45deg) translateY(-7px) translateX(4px);
+	}
+</style>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const toggler = document.getElementById("nav-toggler");
+		const navMenu = document.getElementById("nav-menu");
+
+		toggler.addEventListener("click", () => {
+			// Toggle the 'open' class on the button to trigger the animation
+			toggler.classList.toggle("open");
+
+			// Toggle the 'show' class on the nav menu to show/hide it
+			navMenu.classList.toggle("show");
+
+			// Add or remove the 'hidden' class to control visibility
+			navMenu.classList.contains("show") ? navMenu.classList.remove("hidden") : navMenu.classList.add("hidden");
+		});
+	});
+</script>

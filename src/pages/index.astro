@@ -1,6 +1,6 @@
 ---
 import { getAllWalks } from "@lib/wordPressAPI";
-import { useWordPressAPI } from "@lib/store";
+import { useWordPressAPI } from "@lib/hooks";
 import { getNumberOfWalks, getTotalMilesWalked } from "@lib/functions";
 
 const allWalks = await getAllWalks();
@@ -13,7 +13,7 @@ import Layout from "../components/layouts/Layout.astro";
 import Hero from "./_components/Hero.astro";
 import WalkStats from "./_components/WalkStats.astro";
 
-const pageData = await useWordPressAPI.getWordPressPageBySlug("home");
+const pageData = await useWordPressAPI.getPageBySlug("home");
 ---
 
 <Layout title={pageData?.seo?.title} description={pageData?.seo?.description} canonical="/">
