@@ -2,7 +2,7 @@
 import type { GetStaticPathsResult, Page } from "astro";
 import { type FlattenedWalk } from "@lib/wordPressAPI.types";
 import { allWalks } from "@lib/store";
-import { formatWalkDate } from "@lib/functions";
+import { formatWalkDate, getWalkURI } from "@lib/functions";
 import Layout from "@components/layouts/Layout.astro";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
 
 export const getStaticPaths = async ({ paginate }): Promise<GetStaticPathsResult> => {
 	console.log("Total walks:", allWalks.length);
+	console.log(allWalks);
 
 	return paginate(allWalks, {
 		pageSize: 10,
@@ -26,9 +27,6 @@ const { page } = Astro.props;
 const sortedPageWalks = page.sortedPageWalks ?? page.data;
 const currentPage = page.currentPage;
 const totalPages = page.lastPage;
-
-console.log("Current page:", currentPage);
-console.log("Sorted page walks:", sortedPageWalks?.length);
 ---
 
 <Layout title={`Walks Archive - Page ${currentPage}`}>
@@ -39,7 +37,7 @@ console.log("Sorted page walks:", sortedPageWalks?.length);
 			<ul>
 				{sortedPageWalks.map((walk) => (
 					<li>
-						<a href={`/walks/${walk.walkNumber}/${formatWalkDate(walk.date, "ISO")}`}>
+						<a href={getWalkURI(walk?.walkNumber, walk?.date)}>
 							Walk {walk.walkNumber}: {walk.title} - {formatWalkDate(walk.date)}
 						</a>
 					</li>

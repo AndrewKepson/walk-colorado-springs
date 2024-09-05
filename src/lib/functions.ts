@@ -1,31 +1,8 @@
 import { type FlattenedWalk } from "./wordPressAPI.types";
 
 // * Utility Functions
-export function sortArrayObjectsByProperty(arr, property) {
-	if (!arr || !arr.every((element) => element.hasOwnProperty(property))) {
-		throw new Error(`Every element must have the property '${property}'`);
-	}
 
-	return arr.sort((a, b) => {
-		let propA = a[property];
-		let propB = b[property];
-
-		return propA.localeCompare(propB);
-	});
-}
-
-export function sortEdgesByTitle(edges) {
-	if (!edges || !edges.every((edge) => edge.node && edge.node.title)) {
-		throw new Error("Each edge must have a node with a title");
-	}
-
-	return edges.sort((a, b) => {
-		let titleA = a.node.title.toLowerCase();
-		let titleB = b.node.title.toLowerCase();
-		return titleA.localeCompare(titleB);
-	});
-}
-
+// * Format Date from walkDate
 /**
  * Formats a date string from ISO 8601 format to a more readable format.
  * @param dateString - A date string in the format "YYYY-MM-DDTHH:mm:ss+00:00"
@@ -56,6 +33,29 @@ export function formatWalkDate(dateString: string, outputFormat: "readable" | "I
 // const formattedDate = formatWalkDate("2024-08-30T00:00:00+00:00");
 // console.log(formattedDate); // Output: "August 30, 2024"
 
+// * Get formatted walk URI
+/**
+ * Generates a URI for a walk based on its number and date.
+ * @param walkNumber - The number of the walk
+ * @param walkDate - The date of the walk (in any format that can be parsed by Date constructor)
+ * @returns A string representing the URI for the walk
+ */
+export function getWalkURI(walkNumber: number, walkDate: string): string {
+	try {
+		const formattedDate = formatWalkDate(walkDate, "ISO");
+		return `/walks/${walkNumber}/${formattedDate}`;
+	} catch (error) {
+		console.error(`Error generating walk URI: ${error.message}`);
+		// Fallback to a safe URI if date formatting fails
+		return `/walks/${walkNumber}/invalid-date`;
+	}
+}
+
+// Usage examples:
+// const uri = getWalkURI(5, "2023-05-15");  // Returns "/walks/5/2023-05-15"
+// const uri2 = getWalkURI(10, "May 20, 2023");  // Returns "/walks/10/2023-05-20"
+
+// * Get Total Miles from allWalks
 /**
  * Calculates the total miles walked from an array of WalkData.
  * @param walks - An array of WalkData objects
@@ -66,6 +66,7 @@ export function getTotalMilesWalked(walks: FlattenedWalk[]): number {
 	return Number(totalMiles.toFixed(2)); // Round to two decimal places
 }
 
+// * Get Number of Walks from allWalks
 /**
  * Counts the total number of walks in the WalkData array.
  * @param walks - An array of WalkData objects
