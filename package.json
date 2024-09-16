@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@astrojs/tailwind": "^5.1.0",
-		"astro": "^4.15.3",
+		"astro": "^4.15.6",
 		"blaze-slider": "^1.9.3",
 		"countup.js": "^2.8.0",
 		"dotenv": "^16.4.5",
@@ -19,7 +19,7 @@
 		"prettier-plugin-astro": "^0.13.0",
 		"prettier-plugin-tailwindcss": "^0.5.14",
 		"sharp": "^0.33.5",
-		"tailwindcss": "^3.4.10"
+		"tailwindcss": "^3.4.11"
 	},
 	"devDependencies": {
 		"@tailwindcss/typography": "^0.5.15"

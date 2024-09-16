@@ -7,19 +7,20 @@ interface Props {
 
 import { Image } from "astro:assets";
 
-const { photos } = Astro.props
-console.log(`Photos: ${photos}`)
+const { photos } = Astro.props;
 ---
 
 <div class="blaze-slider">
 	<div class="blaze-container">
 		<div class="blaze-track-container">
 			<div class="blaze-track">
-				{photos?.map((photo) => (
-                    <div>
-                        <Image src={photo?.sourceUrl} alt={photo?.altText} width={300} height={150} />
-                    </div>
-                ))}
+				{
+					photos?.map((photo) => (
+						<div>
+							<Image src={photo?.sourceUrl} alt={photo?.altText} width={1200} height={150} />
+						</div>
+					))
+				}
 			</div>
 		</div>
 	</div>
@@ -38,16 +39,9 @@ console.log(`Photos: ${photos}`)
 			autoplayInterval: 2000,
 			autoplayDirection: "to left",
 			transitionDuration: 300,
-			slidesToShow: 3,
+			slidesToShow: 1,
 			loop: true,
 			enablePagination: true,
-		},
-		"(max-width: 900px)": {
-			slidesToShow: 2,
-		},
-		"(max-width: 500px)": {
-			slidesToShow: 1,
-			draggable: true,
 		},
 	});
 
