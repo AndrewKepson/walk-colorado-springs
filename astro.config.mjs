@@ -1,8 +1,7 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-	integrations: [tailwind()],
 	trailingSlash: "never",
 	site: "https://walkcoloradosprings.com",
 	// prefetch: true,
@@ -10,5 +9,8 @@ export default defineConfig({
 	image: {
 		domains: ["jp7lua9fr7kk.walkcoloradosprings.com"],
 		remotePatterns: [{ protocol: "https" }],
+	},
+	vite: {
+		plugins: [tailwindcss()],
 	},
 });
