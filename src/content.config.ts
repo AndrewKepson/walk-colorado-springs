@@ -1,6 +1,6 @@
 import { defineCollection } from "astro:content";
 import { getAllWalks } from "@lib/wordPressAPI";
-import { walkSchema } from "./wordPressSchemas";
+import { walkSchema } from "./content/wordPressSchemas";
 
 export const walksCollection = defineCollection({
 	schema: walkSchema,
